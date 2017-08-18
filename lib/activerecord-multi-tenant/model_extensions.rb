@@ -50,11 +50,12 @@ module MultiTenant
         end
 
         # New instances should have the tenant set
-        after_initialize Proc.new { |record|
-          if MultiTenant.current_tenant_id && record.public_send(partition_key.to_sym).nil?
+        after_initialize(Proc.new { |record|
+          record_tenant_id = record.public_send(partition_key.to_sym) rescue nil
+          if MultiTenant.current_tenant_id && record_tenant_id.nil?
             record.public_send("#{partition_key}=".to_sym, MultiTenant.current_tenant_id)
           end
-        }
+        })
 
         to_include = Module.new do
           define_method "#{partition_key}=" do |tenant_id|
