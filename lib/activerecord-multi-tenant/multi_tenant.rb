@@ -88,6 +88,27 @@ module MultiTenant
     RequestStore.store[:hll_counts].present?
   end
 
+  def self.disable_multi_tenant=(value)
+    RequestStore.store[:disable_multi_tenant] = value
+  end
+
+  def self.multi_tenant_disabled?
+    RequestStore.store[:disable_multi_tenant].present?
+  end
+
+  def self.without_multi_tenant(*args)
+    if block_given?
+      begin
+        last_value = multi_tenant_disabled?
+        self.disable_multi_tenant = true
+        yield
+      ensure
+        # Make sure we have restored to the previous value!
+        self.disable_multi_tenant = last_value
+      end
+    end
+  end
+
   # Preserve backward compatibility for people using .with_id
   singleton_class.send(:alias_method, :with_id, :with)
 
