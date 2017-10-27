@@ -271,7 +271,7 @@ module ActiveRecord
     alias :build_arel_orig :build_arel
     def build_arel
       arel = build_arel_orig
-      return arel if MultiTenant.multi_tenant_disabled?
+      return arel if self.multi_tenant_disabled?
       unless MultiTenant.with_write_only_mode_enabled?
         # Get select source to be used in enforcement clause if it is a multi-tenant table
         source_table = arel.source.left
