@@ -11,3 +11,7 @@ require_relative 'activerecord-multi-tenant/query_monitor'
 require_relative 'activerecord-multi-tenant/referential_integrity'
 require_relative 'activerecord-multi-tenant/version'
 require_relative 'activerecord-multi-tenant/with_lock'
+
+if Object.const_defined?(:ActiveRecord)
+  require_relative 'activerecord-multi-tenant/active_record/relation_extension'
+end

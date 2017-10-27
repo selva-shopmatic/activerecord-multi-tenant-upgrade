@@ -298,11 +298,11 @@ module ActiveRecord
                     source_table[source_partition_key]
                   )
                 else
-                  MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key])
+                  MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
                 end
                 node.right.expr = node.right.expr.and(enforcement_clause)
               when Arel::Nodes::SelectCore
-                enforcement_clause = MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key])
+                enforcement_clause = MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
                 if node.wheres.empty?
                   node.wheres = [enforcement_clause]
                 else
