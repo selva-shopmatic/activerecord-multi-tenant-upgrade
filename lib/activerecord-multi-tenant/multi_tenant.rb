@@ -118,6 +118,9 @@ module MultiTenant
       Automatically changed to value: #{changed}
 
       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+      Backtrace: 
+      #{caller.join("\n")}
     DOC
     Rails.logger.warn msg
     STDERR.puts msg
