@@ -109,21 +109,28 @@ module MultiTenant
     end
   end
 
+  class << self
+    attr_accessor :raise_exception_when_attribute_changed
+  end
+
   def self.warn_attribute_change(relation, attr_name, original, changed)
     msg = <<-DOC
-      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      
-      WARNING: the relation #{relation.class} is spawned or loaded with '#{attr_name}' value is #{original}
-              which is different from value of source relation: #{changed}
-      Automatically changed to value: #{changed}
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+WARNING: the relation #{relation.class} is spawned or loaded with '#{attr_name}' value is #{original}
+        which is different from value of source relation: #{changed}
+Automatically changed to value: #{changed}
 
-      Backtrace: 
-      #{caller.join("\n")}
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Backtrace: 
+#{caller.join("\n")}
     DOC
     Rails.logger.warn msg
     STDERR.puts msg
+    if self.raise_exception_when_attribute_changed
+      raise RuntimeError, "the relation #{relation.class} is spawned or loaded with '#{attr_name}' value is #{original},  which is different from value of source relation: #{changed}"
+    end
   end
 
   # Preserve backward compatibility for people using .with_id
