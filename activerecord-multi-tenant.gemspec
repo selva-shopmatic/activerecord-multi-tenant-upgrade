@@ -15,10 +15,11 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://github.com/citusdata/activerecord-multi-tenant'
   s.license       = 'MIT'
 
-  s.add_runtime_dependency('request_store', '>= 1.0.5')
-  s.add_dependency('rails','>= 3.1')
+  # s.add_runtime_dependency('request_store', '>= 1.0.5')
+  s.add_runtime_dependency('request_store')
+  s.add_dependency('rails','>= 5.2.8')
 
-  s.add_development_dependency 'rspec', '>= 3.0'
+  s.add_development_dependency 'rspec'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'pg'
   s.add_development_dependency 'rake'
