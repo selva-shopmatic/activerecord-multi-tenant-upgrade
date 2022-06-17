@@ -269,8 +269,8 @@ require 'active_record/relation'
 module ActiveRecord
   module QueryMethods
     alias :build_arel_orig :build_arel
-    def build_arel
-      arel = build_arel_orig
+    def build_arel(*args)
+      arel = build_arel_orig(*args)
       return arel if self.multi_tenant_disabled?
       unless MultiTenant.with_write_only_mode_enabled?
         # Get select source to be used in enforcement clause if it is a multi-tenant table
