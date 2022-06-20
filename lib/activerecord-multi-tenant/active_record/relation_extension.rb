@@ -8,6 +8,7 @@ module ActiveRecord
 
     alias :multi_tenant_orig_initialize :initialize
     def initialize(*args)
+      puts args
       multi_tenant_orig_initialize(*args)
       # multi_tenant_orig_initialize(*args, &block)
       @creating_tenant = MultiTenant.current_tenant_id
