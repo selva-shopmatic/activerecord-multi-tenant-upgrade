@@ -7,7 +7,7 @@ module ActiveRecord
     attr_accessor :creating_tenant, :multi_tenant_disabled
 
     alias :multi_tenant_orig_initialize :initialize
-    def initialize(*args, &block)
+    def initialize(*args)
       multi_tenant_orig_initialize(*args)
       # multi_tenant_orig_initialize(*args, &block)
       @creating_tenant = MultiTenant.current_tenant_id
