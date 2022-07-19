@@ -272,48 +272,48 @@ module ActiveRecord
     def build_arel(*args)
       arel = build_arel_orig(*args)
       return arel if self.multi_tenant_disabled?
-      unless MultiTenant.with_write_only_mode_enabled?
-        # Get select source to be used in enforcement clause if it is a multi-tenant table
-        source_table = arel.source.left
-        source_model = MultiTenant.multi_tenant_model_for_table(source_table.table_name)
-        source_partition_key = source_model.try(:partition_key)
+      # unless MultiTenant.with_write_only_mode_enabled?
+      #   # Get select source to be used in enforcement clause if it is a multi-tenant table
+      #   source_table = arel.source.left
+      #   source_model = MultiTenant.multi_tenant_model_for_table(source_table.table_name)
+      #   source_partition_key = source_model.try(:partition_key)
 
-        visitor = MultiTenant::ArelTenantVisitor.new(arel)
-        visitor.contexts.each do |context|
-          node = context.arel_node
-          next unless MultiTenant.current_tenant || node.is_a?(Arel::Nodes::Join)
-          # relations = if MultiTenant.current_tenant
-          #               context.unhandled_relations.uniq
-          #             else
-          #               context.known_relations.uniq
-          #             end
-          # relations.each do |relation|
-          #   model = MultiTenant.multi_tenant_model_for_table(relation.arel_table.table_name)
-          #   case node
-          #     when Arel::Nodes::Join #Arel::Nodes::OuterJoin, Arel::Nodes::RightOuterJoin, Arel::Nodes::FullOuterJoin
-          #       next if relation.arel_table.name == source_table.name
-          #       enforcement_clause = if model.partition_key == source_partition_key
-          #         MultiTenant::TenantEnforcementClause.new(
-          #           relation.arel_table[model.partition_key],
-          #           source_table[source_partition_key]
-          #         )
-          #       else
-          #         MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
-          #       end
-          #       node.right.expr = node.right.expr.and(enforcement_clause)
-          #     when Arel::Nodes::SelectCore
-          #       enforcement_clause = MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
-          #       if node.wheres.empty?
-          #         node.wheres = [enforcement_clause]
-          #       else
-          #         node.wheres[0] = enforcement_clause.and(node.wheres[0])
-          #       end
-          #     else
-          #       raise "UnknownContext"
-          #     end
-          # end
-        end
-      end
+      #   visitor = MultiTenant::ArelTenantVisitor.new(arel)
+      #   visitor.contexts.each do |context|
+      #     node = context.arel_node
+      #     next unless MultiTenant.current_tenant || node.is_a?(Arel::Nodes::Join)
+      #     relations = if MultiTenant.current_tenant
+      #                   context.unhandled_relations.uniq
+      #                 else
+      #                   context.known_relations.uniq
+      #                 end
+      #     relations.each do |relation|
+      #       model = MultiTenant.multi_tenant_model_for_table(relation.arel_table.table_name)
+      #       case node
+      #         when Arel::Nodes::Join #Arel::Nodes::OuterJoin, Arel::Nodes::RightOuterJoin, Arel::Nodes::FullOuterJoin
+      #           next if relation.arel_table.name == source_table.name
+      #           enforcement_clause = if model.partition_key == source_partition_key
+      #             MultiTenant::TenantEnforcementClause.new(
+      #               relation.arel_table[model.partition_key],
+      #               source_table[source_partition_key]
+      #             )
+      #           else
+      #             MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
+      #           end
+      #           node.right.expr = node.right.expr.and(enforcement_clause)
+      #         when Arel::Nodes::SelectCore
+      #           enforcement_clause = MultiTenant::TenantEnforcementClause.new(relation.arel_table[model.partition_key], self.get_effective_tenant_id)
+      #           if node.wheres.empty?
+      #             node.wheres = [enforcement_clause]
+      #           else
+      #             node.wheres[0] = enforcement_clause.and(node.wheres[0])
+      #           end
+      #         else
+      #           raise "UnknownContext"
+      #         end
+      #     end
+      #   end
+      # end
       return arel if MultiTenant.current_tenant
       MultiTenant::SqlWorkarounds.convert_distinct_to_group_by(arel)
     end
