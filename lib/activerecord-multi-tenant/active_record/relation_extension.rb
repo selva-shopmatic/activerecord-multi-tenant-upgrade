@@ -22,6 +22,7 @@ module ActiveRecord
     end
 
     def get_effective_tenant_id
+      @creating_tenant = MultiTenant.current_tenant_id unless MultiTenant.current_tenant_id != 0 && @creating_tenant != MultiTenant.current_tenant_id
       if @creating_tenant && @creating_tenant != MultiTenant.current_tenant_id && klass.try(:scoped_by_tenant?)
         MultiTenant.warn_attribute_change(self, :creating_tenant, MultiTenant.current_tenant_id, @creating_tenant)
       end
